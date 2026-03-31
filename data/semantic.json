@@ -1,0 +1,124 @@
+{
+  "operator": {
+    "name": "ELIOS",
+    "fullName": "ELIOS Strategic Intelligence",
+    "tagline": "Clarity creates momentum. Momentum creates revenue.",
+    "description": "Operator intelligence platform that transforms strategic ambiguity into executable clarity for growth-stage companies.",
+    "founder": "Carlos Silva",
+    "principles": [
+      "Operators build. Consultants advise. We do both.",
+      "Revenue is the scoreboard. Everything else is commentary.",
+      "Speed of execution beats perfection of strategy.",
+      "Every framework must produce a deliverable, not a deck.",
+      "Clarity is the product. Growth is the outcome."
+    ],
+    "voice": {
+      "tone": "Direct, confident, zero-filler",
+      "style": "Operator-first. No corporate speak. No jargon without justification.",
+      "rules": [
+        "Never say 'leverage' when you mean 'use'",
+        "Never say 'utilize' when you mean 'use'",
+        "Never say 'facilitate' when you mean 'help'",
+        "Never use em dashes",
+        "Lead with the answer, not the reasoning"
+      ]
+    }
+  },
+  "clients": [
+    {
+      "id": "trusted-roofing",
+      "name": "Trusted Roofing",
+      "industry": "Home Services",
+      "market": "St. Louis, MO",
+      "stage": "Growth",
+      "revenue": "$2.5M target Year 1",
+      "focus": ["Lead generation", "Brand positioning", "CMO dashboard"],
+      "status": "active"
+    },
+    {
+      "id": "precision-hvac",
+      "name": "Precision HVAC",
+      "industry": "Home Services",
+      "market": "Denver, CO",
+      "stage": "Scale",
+      "revenue": "$4.2M annual",
+      "focus": ["Revenue operations", "Sales pipeline", "GEO optimization"],
+      "status": "active"
+    },
+    {
+      "id": "summit-solar",
+      "name": "Summit Solar",
+      "industry": "Renewable Energy",
+      "market": "Phoenix, AZ",
+      "stage": "Launch",
+      "revenue": "$800K pipeline",
+      "focus": ["Market positioning", "Content strategy", "Competitive intelligence"],
+      "status": "active"
+    }
+  ],
+  "products": [
+    {
+      "id": "acquisition-os",
+      "name": "Acquisition OS",
+      "description": "Full-stack acquisition intelligence platform. Underwriting engine, deal flow management, market analysis.",
+      "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+      "status": "deployed",
+      "url": "https://acquisition-os.vercel.app"
+    },
+    {
+      "id": "cmo-os",
+      "name": "CMO OS",
+      "description": "Templatized CMO command center for home services companies. Analytics, KPIs, market intelligence.",
+      "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+      "status": "deployed",
+      "url": "https://cmo-os.vercel.app"
+    },
+    {
+      "id": "agent-os",
+      "name": "Agent OS",
+      "description": "Multi-agent orchestration platform. Four specialized agents with shared memory and context assembly.",
+      "stack": ["Next.js", "TypeScript", "Anthropic SDK", "Tailwind CSS"],
+      "status": "building",
+      "url": null
+    }
+  ],
+  "rules": {
+    "engagement": [
+      "Every client interaction starts with listening, ends with a deliverable",
+      "No proposal without research. No strategy without data.",
+      "Underpromise on timeline, overdeliver on quality",
+      "If a client asks 'what should we do?', the answer is never 'it depends'"
+    ],
+    "pricing": [
+      "Value-based pricing, not hourly",
+      "Minimum engagement: $5,000/month",
+      "Equity consideration for early-stage companies with strong operators",
+      "No discounts. Better scope instead."
+    ],
+    "delivery": [
+      "Ship v1 in week one. Iterate in weeks two through four.",
+      "Every deliverable includes a 90-day roadmap",
+      "Weekly async updates. Monthly strategy reviews.",
+      "All dashboards and tools are client-owned from day one"
+    ]
+  },
+  "frameworks": {
+    "elios": {
+      "E": "Evaluate: Assess current state with data, not assumptions",
+      "L": "Listen: Understand the operator's real constraints and goals",
+      "I": "Identify: Find the highest-leverage opportunity",
+      "O": "Orchestrate: Build the system, not just the strategy",
+      "S": "Scale: Make it repeatable and self-sustaining"
+    },
+    "bsom": {
+      "name": "Build-Scale-Optimize-Monetize",
+      "description": "Decision filter for every business initiative",
+      "stages": [
+        "Build: Does this create something new?",
+        "Scale: Does this make something existing work for more people?",
+        "Optimize: Does this make something existing work better?",
+        "Monetize: Does this directly generate or protect revenue?"
+      ]
+    }
+  }
+}
