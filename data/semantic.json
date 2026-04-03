@@ -39,6 +39,54 @@
       "github_org": "workwithlos-ui"
     }
   },
+  "operator_context": {
+    "current_month": "April 2026",
+    "revenue_target": 75000,
+    "pipeline_value": 68500,
+    "revenue_gap": 6500,
+    "mode": "pipeline_now",
+    "stack": ["Claude", "Next.js 14", "TypeScript", "Tailwind", "Vercel", "GitHub"],
+    "deploy_agent": "Manus via Telegram",
+    "vercel_team": "los-projects-43728f1d",
+    "github_org": "workwithlos-ui"
+  },
+  "clients": [
+    {
+      "id": "kent-clothier",
+      "name": "Kent Clothier / Boardroom Brain",
+      "industry": "Mastermind / Education",
+      "market": "High-net-worth real estate investors",
+      "stage": "Delivery",
+      "revenue": "$35K-$45K total, first tranche paid, balance owed",
+      "focus": ["RAG knowledge OS", "Community AI", "Kent-voiced responses"],
+      "status": "active",
+      "urgency": "COLLECT BALANCE NOW. Demo meeting April 17. Call Ed Rosenfield.",
+      "contact": "Kent Clothier (founder)"
+    },
+    {
+      "id": "ternus-lending",
+      "name": "Ternus Lending / Sales AI Acceleration",
+      "industry": "Lending / Mortgage",
+      "market": "National",
+      "stage": "Delivery",
+      "revenue": "TBD, 5-phase SOW pending",
+      "focus": ["Speed-to-lead 4hr14min to 58 seconds DELIVERED", "Follow-up automation", "Conversation intelligence", "Sales dashboard", "Agent pods"],
+      "status": "active",
+      "urgency": "SOW not yet sent. Pending billing entity confirmation and Alex 4 questions.",
+      "contact": "Tim CEO tim@ternus.com, Sanjay project lead, Michelle support"
+    },
+    {
+      "id": "trusted-roofing",
+      "name": "Trusted Roofing / Ryan Hill",
+      "industry": "Home Services / Roofing",
+      "market": "Texas",
+      "stage": "Phase 3 blocked",
+      "revenue": "Equity deal, Los holds equity",
+      "focus": ["CMO OS live", "Phase 3 blocked on voice memos"],
+      "status": "active",
+      "note": "KEEP SEPARATE FROM ELIOS. This is a 33V private equity arrangement. Never mix into ELIOS client context."
+    }
+  ],
   "activeClients": [
     {
       "id": "kent-clothier",
@@ -50,8 +98,7 @@
       "focus": ["RAG knowledge OS", "Community AI", "Kent-voiced responses"],
       "status": "active",
       "urgency": "COLLECT BALANCE NOW. Demo meeting April 17. Call Ed Rosenfield.",
-      "contact": "Kent Clothier (founder)",
-      "gmail_draft": "r4198676478491485244"
+      "contact": "Kent Clothier (founder)"
     },
     {
       "id": "ternus-lending",
@@ -178,5 +225,39 @@
       "API routes use direct Claude API calls, no SDK, no middleware.",
       "TypeScript strict mode on every project."
     ]
+  },
+  "frameworks": {
+    "spcl": {
+      "name": "SPCL Content Scoring",
+      "description": "Score every piece of content on 4 pillars before publishing",
+      "pillars": {
+        "S": "Status - elevates perceived authority in category",
+        "P": "Power - demonstrates capability and track record",
+        "C": "Credibility - backed by named clients and specific numbers",
+        "L": "Likeness - speaks the exact language of the target ICP"
+      },
+      "thresholds": {
+        "90-100": "Auto-publish",
+        "75-89": "Review",
+        "60-74": "Regenerate",
+        "below-60": "Discard"
+      }
+    },
+    "bsom": {
+      "name": "Build-Scale-Optimize-Monetize",
+      "description": "Decision filter for every business initiative",
+      "stages": [
+        "Build: Does this create something new?",
+        "Scale: Does this make something existing work for more people?",
+        "Optimize: Does this make something existing work better?",
+        "Monetize: Does this directly generate or protect revenue?"
+      ]
+    },
+    "proof_bank": {
+      "speed_to_lead": "4 hours 14 minutes to 58 seconds for Ternus Lending. AI SDR qualifies, routes, follows up. No human until call is booked.",
+      "content_machine": "25 SPCL-scored posts from one transcript input across 7 platforms",
+      "advisory_replacement": "5 AI executives on call 24/7 replacing $10K-$50K/year in fractional exec costs",
+      "margin_math": "$180K salaries to deliver $220K revenue = 18% margin. Replaced with AI systems = $400K revenue with team of 2"
+    }
   }
 }
