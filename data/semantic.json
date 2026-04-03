@@ -26,20 +26,20 @@
         "Every claim backed by metric, named client, or documented outcome",
         "End with tension or specific CTA, never a neat summary"
       ]
+    },
+    "context": {
+      "current_month": "April 2026",
+      "revenue_target": 75000,
+      "pipeline_value": 68500,
+      "revenue_gap": 6500,
+      "mode": "pipeline_now",
+      "stack": ["Claude", "Next.js 14", "TypeScript", "Tailwind", "Vercel", "GitHub"],
+      "deploy_agent": "Manus via Telegram",
+      "vercel_team": "los-projects-43728f1d",
+      "github_org": "workwithlos-ui"
     }
   },
-  "operator_context": {
-    "current_month": "April 2026",
-    "revenue_target": 75000,
-    "pipeline_value": 68500,
-    "revenue_gap": 6500,
-    "mode": "pipeline_now",
-    "stack": ["Claude", "Next.js 14", "TypeScript", "Tailwind", "Vercel", "GitHub"],
-    "deploy_agent": "Manus via Telegram",
-    "vercel_team": "los-projects-43728f1d",
-    "github_org": "workwithlos-ui"
-  },
-  "clients": [
+  "activeClients": [
     {
       "id": "kent-clothier",
       "name": "Kent Clothier / Boardroom Brain",
@@ -135,6 +135,28 @@
       "url": "https://elios-hq.vercel.app"
     }
   ],
+  "proofBank": {
+    "speed_to_lead": "4 hours 14 minutes to 58 seconds for Ternus Lending. AI SDR qualifies, routes, follows up. No human until call is booked.",
+    "content_machine": "25 SPCL-scored posts from one transcript input across 7 platforms",
+    "advisory_replacement": "5 AI executives on call 24/7 replacing $10K-$50K/year in fractional exec costs",
+    "margin_math": "$180K salaries to deliver $220K revenue = 18% margin. Replaced with AI systems = $400K revenue with team of 2"
+  },
+  "spcl": {
+    "name": "SPCL Content Scoring",
+    "description": "Score every piece of content on 4 pillars before publishing",
+    "pillars": {
+      "S": "Status - elevates perceived authority in category",
+      "P": "Power - demonstrates capability and track record",
+      "C": "Credibility - backed by named clients and specific numbers",
+      "L": "Likeness - speaks the exact language of the target ICP"
+    },
+    "thresholds": {
+      "90-100": "Auto-publish",
+      "75-89": "Review",
+      "60-74": "Regenerate",
+      "below-60": "Discard"
+    }
+  },
   "rules": {
     "engagement": [
       "Every conversation must connect to closing the $6,500 April revenue gap or building systems that generate recurring revenue",
@@ -156,39 +178,5 @@
       "API routes use direct Claude API calls, no SDK, no middleware.",
       "TypeScript strict mode on every project."
     ]
-  },
-  "frameworks": {
-    "spcl": {
-      "name": "SPCL Content Scoring",
-      "description": "Score every piece of content on 4 pillars before publishing",
-      "pillars": {
-        "S": "Status - elevates perceived authority in category",
-        "P": "Power - demonstrates capability and track record",
-        "C": "Credibility - backed by named clients and specific numbers",
-        "L": "Likeness - speaks the exact language of the target ICP"
-      },
-      "thresholds": {
-        "90-100": "Auto-publish",
-        "75-89": "Review",
-        "60-74": "Regenerate",
-        "below-60": "Discard"
-      }
-    },
-    "bsom": {
-      "name": "Build-Scale-Optimize-Monetize",
-      "description": "Decision filter for every business initiative",
-      "stages": [
-        "Build: Does this create something new?",
-        "Scale: Does this make something existing work for more people?",
-        "Optimize: Does this make something existing work better?",
-        "Monetize: Does this directly generate or protect revenue?"
-      ]
-    },
-    "proof_bank": {
-      "speed_to_lead": "4 hours 14 minutes to 58 seconds for Ternus Lending. AI SDR qualifies, routes, follows up. No human until call is booked.",
-      "content_machine": "25 SPCL-scored posts from one transcript input across 7 platforms",
-      "advisory_replacement": "5 AI executives on call 24/7 replacing $10K-$50K/year in fractional exec costs",
-      "margin_math": "$180K salaries to deliver $220K revenue = 18% margin. Replaced with AI systems = $400K revenue with team of 2"
-    }
   }
 }
