@@ -1,10 +1,10 @@
-export type AgentId = "cody" | "rex" | "maya" | "nova";
-
+export type AgentId = "cody" | "rex" | "maya" | "nova" | "priya";
 export type AgentRole =
   | "engineer"
   | "revenue"
   | "marketing"
-  | "operations";
+  | "operations"
+  | "finance";
 
 export interface AgentDefinition {
   id: AgentId;
@@ -28,6 +28,7 @@ export interface ContextEnvelope {
 
 export interface SemanticContext {
   operator: OperatorProfile;
+  operator_context?: Record<string, unknown>;
   clients: ClientProfile[];
   products: ProductProfile[];
   rules: Rules;
@@ -41,11 +42,7 @@ export interface OperatorProfile {
   description: string;
   founder: string;
   principles: string[];
-  voice: {
-    tone: string;
-    style: string;
-    rules: string[];
-  };
+  voice: { tone: string; style: string; rules: string[] };
 }
 
 export interface ClientProfile {
@@ -57,6 +54,9 @@ export interface ClientProfile {
   revenue: string;
   focus: string[];
   status: string;
+  urgency?: string;
+  contact?: string;
+  note?: string;
 }
 
 export interface ProductProfile {
@@ -103,6 +103,24 @@ export interface AgentResponse {
   agentId: AgentId;
   episodicEntry: EpisodicEntry | null;
   timestamp: string;
+}
+
+export interface BoardBriefingRequest {
+  question: string;
+  context?: string;
+  mode?: "brief" | "deep" | "tension";
+}
+
+export interface BoardBriefingResponse {
+  briefings: Array<{
+    agentId: AgentId;
+    name: string;
+    role: string;
+    response: string;
+  }>;
+  synthesis: string;
+  question: string;
+  tensionPoints: string[];
 }
 
 export interface MemoryQueryRequest {

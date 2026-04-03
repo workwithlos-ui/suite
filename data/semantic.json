@@ -1,114 +1,178 @@
 {
   "operator": {
     "name": "ELIOS",
-    "fullName": "ELIOS Strategic Intelligence",
-    "tagline": "Clarity creates momentum. Momentum creates revenue.",
-    "description": "Operator intelligence platform that transforms strategic ambiguity into executable clarity for growth-stage companies.",
-    "founder": "Carlos Silva",
+    "fullName": "ELIOS AI Operating Systems",
+    "tagline": "Every build is a system. Every system is a product. Every product generates revenue.",
+    "description": "AI-native operating systems company that builds custom OS dashboards, agent pods, and autonomous systems for agencies, operators, and blue collar companies. Primary builder and founder: Los Silva. Two entities: ELIOS (build arm, client work) and 33V (holding company, SaaS products). Target: $75,000 net revenue in April 2026.",
+    "founder": "Los Silva",
     "principles": [
-      "Operators build. Consultants advise. We do both.",
-      "Revenue is the scoreboard. Everything else is commentary.",
-      "Speed of execution beats perfection of strategy.",
-      "Every framework must produce a deliverable, not a deck.",
-      "Clarity is the product. Growth is the outcome."
+      "Every build has a price tag. Every deliverable gets a monetization angle. No exceptions.",
+      "Build once, sell many. Every client build becomes a template, SOP, and sellable product.",
+      "Claude-native only. No n8n, no Zapier, no middleware. Direct API calls. Full ownership.",
+      "Every process becomes an SOP becomes a sellable product.",
+      "Ship demo first. Demos close deals. Perfect code comes second.",
+      "Quality gates on every output. Elite standard only.",
+      "Proof over claims. Named results, specific numbers, real clients.",
+      "Revenue urgency always high. $75K April target. Pipeline now."
     ],
     "voice": {
-      "tone": "Direct, confident, zero-filler",
-      "style": "Operator-first. No corporate speak. No jargon without justification.",
+      "tone": "Direct, urgent, numerical, zero filler",
+      "style": "Builder-operator. No corporate language. Lead with numbers and named results. Anti-slop always.",
       "rules": [
-        "Never say 'leverage' when you mean 'use'",
-        "Never say 'utilize' when you mean 'use'",
-        "Never say 'facilitate' when you mean 'help'",
-        "Never use em dashes",
-        "Lead with the answer, not the reasoning"
+        "Lead with specific numbers or named results, never generic statements",
+        "No: leverage, synergy, game-changer, unlock, empower, innovative",
+        "No openers: In today's..., Have you ever..., It's important to...",
+        "Short punchy sentences mixed with longer ones",
+        "Every claim backed by metric, named client, or documented outcome",
+        "End with tension or specific CTA, never a neat summary"
       ]
     }
   },
+  "operator_context": {
+    "current_month": "April 2026",
+    "revenue_target": 75000,
+    "pipeline_value": 68500,
+    "revenue_gap": 6500,
+    "mode": "pipeline_now",
+    "stack": ["Claude", "Next.js 14", "TypeScript", "Tailwind", "Vercel", "GitHub"],
+    "deploy_agent": "Manus via Telegram",
+    "vercel_team": "los-projects-43728f1d",
+    "github_org": "workwithlos-ui"
+  },
   "clients": [
     {
+      "id": "kent-clothier",
+      "name": "Kent Clothier / Boardroom Brain",
+      "industry": "Mastermind / Education",
+      "market": "High-net-worth real estate investors",
+      "stage": "Delivery",
+      "revenue": "$35K-$45K total, first tranche paid, balance owed",
+      "focus": ["RAG knowledge OS", "Community AI", "Kent-voiced responses"],
+      "status": "active",
+      "urgency": "COLLECT BALANCE NOW. Demo meeting April 17. Call Ed Rosenfield.",
+      "contact": "Kent Clothier (founder)",
+      "gmail_draft": "r4198676478491485244"
+    },
+    {
+      "id": "ternus-lending",
+      "name": "Ternus Lending / Sales AI Acceleration",
+      "industry": "Lending / Mortgage",
+      "market": "National",
+      "stage": "Delivery",
+      "revenue": "TBD, 5-phase SOW pending",
+      "focus": ["Speed-to-lead 4hr14min to 58 seconds DELIVERED", "Follow-up automation", "Conversation intelligence", "Sales dashboard", "Agent pods"],
+      "status": "active",
+      "urgency": "SOW not yet sent. Pending billing entity confirmation and Alex 4 questions.",
+      "contact": "Tim CEO tim@ternus.com, Sanjay project lead, Michelle support"
+    },
+    {
       "id": "trusted-roofing",
-      "name": "Trusted Roofing",
-      "industry": "Home Services",
-      "market": "St. Louis, MO",
-      "stage": "Growth",
-      "revenue": "$2.5M target Year 1",
-      "focus": ["Lead generation", "Brand positioning", "CMO dashboard"],
-      "status": "active"
-    },
-    {
-      "id": "precision-hvac",
-      "name": "Precision HVAC",
-      "industry": "Home Services",
-      "market": "Denver, CO",
-      "stage": "Scale",
-      "revenue": "$4.2M annual",
-      "focus": ["Revenue operations", "Sales pipeline", "GEO optimization"],
-      "status": "active"
-    },
-    {
-      "id": "summit-solar",
-      "name": "Summit Solar",
-      "industry": "Renewable Energy",
-      "market": "Phoenix, AZ",
-      "stage": "Launch",
-      "revenue": "$800K pipeline",
-      "focus": ["Market positioning", "Content strategy", "Competitive intelligence"],
-      "status": "active"
+      "name": "Trusted Roofing / Ryan Hill",
+      "industry": "Home Services / Roofing",
+      "market": "Texas",
+      "stage": "Phase 3 blocked",
+      "revenue": "Equity deal, Los holds equity",
+      "focus": ["CMO OS live", "Phase 3 blocked on voice memos"],
+      "status": "active",
+      "note": "KEEP SEPARATE FROM ELIOS. This is a 33V private equity arrangement. Never mix into ELIOS client context."
     }
   ],
   "products": [
     {
-      "id": "acquisition-os",
-      "name": "Acquisition OS",
-      "description": "Full-stack acquisition intelligence platform. Underwriting engine, deal flow management, market analysis.",
-      "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
-      "status": "deployed",
-      "url": "https://acquisition-os.vercel.app"
+      "id": "axis",
+      "name": "AXIS",
+      "description": "Unified AI operating system hub for agencies. All 6 modules: Media OS, Content OS, Board OS, Sales OS, CMO OS, AEO OS. White-label, $3,997/month.",
+      "stack": ["Next.js 14", "TypeScript", "Claude Sonnet+Opus", "Vercel"],
+      "status": "live",
+      "url": "https://elios-os-pi.vercel.app"
     },
     {
-      "id": "cmo-os",
-      "name": "CMO OS",
-      "description": "Templatized CMO command center for home services companies. Analytics, KPIs, market intelligence.",
-      "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
-      "status": "deployed",
-      "url": "https://cmo-os.vercel.app"
+      "id": "signal",
+      "name": "SIGNAL / Media OS",
+      "description": "Content intelligence OS. Raw material in, SPCL-scored platform-native content out. Mission control, source distillation, content engine, weekly planner, context manager.",
+      "stack": ["Next.js", "Claude Sonnet", "Vercel"],
+      "status": "live",
+      "url": "https://elios-media-os.vercel.app"
     },
     {
-      "id": "agent-os",
-      "name": "Agent OS",
-      "description": "Multi-agent orchestration platform. Four specialized agents with shared memory and context assembly.",
-      "stack": ["Next.js", "TypeScript", "Anthropic SDK", "Tailwind CSS"],
-      "status": "building",
-      "url": null
+      "id": "quorum",
+      "name": "QUORUM",
+      "description": "AI advisory board. 5 specialist agents: Rex (revenue), Maya (growth), Nova (ops), Priya (finance), Cody (tech). Individual chat + board briefing mode.",
+      "stack": ["Next.js", "Claude Opus", "Vercel"],
+      "status": "live",
+      "url": "https://elios-agent-os.vercel.app"
+    },
+    {
+      "id": "forge",
+      "name": "FORGE",
+      "description": "Anti-slop content engine. 12 rules enforced. Brand voice DNA extraction. Competitive intelligence. 6 platforms.",
+      "stack": ["Next.js", "Claude Sonnet", "OpenAI", "Vercel"],
+      "status": "live",
+      "url": "https://content-factory-ochre.vercel.app"
+    },
+    {
+      "id": "paid",
+      "name": "PAID",
+      "description": "Business diagnostic tool. Enter real numbers, get Hormozi-math 30-day growth playbook. LTGP:CAC analysis, week-by-week plan, quick wins.",
+      "stack": ["React", "Express", "Claude Sonnet", "Vercel"],
+      "status": "live - results page broken",
+      "url": "https://growth-engine-topaz.vercel.app"
+    },
+    {
+      "id": "distroengine",
+      "name": "DistroEngine",
+      "description": "Mass content distribution. 12 sub-accounts, 5 platforms, one input. Agency independence playbook. AI generation layer not yet built.",
+      "stack": ["Next.js", "Claude Sonnet", "Vercel"],
+      "status": "ui-live-ai-missing",
+      "url": "https://distro-engine.vercel.app"
+    },
+    {
+      "id": "orbit",
+      "name": "ORBIT",
+      "description": "Internal ops dashboard. Priority queue, project cards, revenue tracker.",
+      "stack": ["Next.js", "Vercel"],
+      "status": "live",
+      "url": "https://elios-hq.vercel.app"
     }
   ],
   "rules": {
     "engagement": [
-      "Every client interaction starts with listening, ends with a deliverable",
-      "No proposal without research. No strategy without data.",
-      "Underpromise on timeline, overdeliver on quality",
-      "If a client asks 'what should we do?', the answer is never 'it depends'"
+      "Every conversation must connect to closing the $6,500 April revenue gap or building systems that generate recurring revenue",
+      "Build once, sell many. Every client engagement becomes a template product.",
+      "Demo first. Ship v1 this week. Optimize next week.",
+      "Never give generic advice without running the specific math against real numbers"
     ],
     "pricing": [
-      "Value-based pricing, not hourly",
-      "Minimum engagement: $5,000/month",
-      "Equity consideration for early-stage companies with strong operators",
-      "No discounts. Better scope instead."
+      "ELIOS client builds: $8,000-$65,000 per engagement",
+      "33V SaaS products: $97-$4,997/month depending on product and tier",
+      "AXIS agency license: $3,997/month",
+      "QUORUM: $497/month founder, $4,997/month enterprise",
+      "Every build must have a recurring revenue component"
     ],
     "delivery": [
-      "Ship v1 in week one. Iterate in weeks two through four.",
-      "Every deliverable includes a 90-day roadmap",
-      "Weekly async updates. Monthly strategy reviews.",
-      "All dashboards and tools are client-owned from day one"
+      "Ship demo in week one. Claude Code for builds, Manus for deploys.",
+      "Vercel for all deployments, GitHub org workwithlos-ui for all repos.",
+      "Every deliverable is client-owned from day one.",
+      "API routes use direct Claude API calls, no SDK, no middleware.",
+      "TypeScript strict mode on every project."
     ]
   },
   "frameworks": {
-    "elios": {
-      "E": "Evaluate: Assess current state with data, not assumptions",
-      "L": "Listen: Understand the operator's real constraints and goals",
-      "I": "Identify: Find the highest-leverage opportunity",
-      "O": "Orchestrate: Build the system, not just the strategy",
-      "S": "Scale: Make it repeatable and self-sustaining"
+    "spcl": {
+      "name": "SPCL Content Scoring",
+      "description": "Score every piece of content on 4 pillars before publishing",
+      "pillars": {
+        "S": "Status - elevates perceived authority in category",
+        "P": "Power - demonstrates capability and track record",
+        "C": "Credibility - backed by named clients and specific numbers",
+        "L": "Likeness - speaks the exact language of the target ICP"
+      },
+      "thresholds": {
+        "90-100": "Auto-publish",
+        "75-89": "Review",
+        "60-74": "Regenerate",
+        "below-60": "Discard"
+      }
     },
     "bsom": {
       "name": "Build-Scale-Optimize-Monetize",
@@ -119,6 +183,12 @@
         "Optimize: Does this make something existing work better?",
         "Monetize: Does this directly generate or protect revenue?"
       ]
+    },
+    "proof_bank": {
+      "speed_to_lead": "4 hours 14 minutes to 58 seconds for Ternus Lending. AI SDR qualifies, routes, follows up. No human until call is booked.",
+      "content_machine": "25 SPCL-scored posts from one transcript input across 7 platforms",
+      "advisory_replacement": "5 AI executives on call 24/7 replacing $10K-$50K/year in fractional exec costs",
+      "margin_math": "$180K salaries to deliver $220K revenue = 18% margin. Replaced with AI systems = $400K revenue with team of 2"
     }
   }
 }
