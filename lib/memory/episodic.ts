@@ -1,32 +1,9 @@
-import { promises as fs } from "fs";
-import path from "path";
 import type { AgentId, EpisodicEntry } from "@/lib/types";
 
-const MEMORY_DIR = path.join(process.cwd(), ".memory");
-const EPISODES_FILE = path.join(MEMORY_DIR, "episodes.json");
-
-async function ensureMemoryDir(): Promise<void> {
-  try {
-    await fs.access(MEMORY_DIR);
-  } catch {
-    await fs.mkdir(MEMORY_DIR, { recursive: true });
-  }
-}
-
-async function readEpisodes(): Promise<EpisodicEntry[]> {
-  await ensureMemoryDir();
-  try {
-    const data = await fs.readFile(EPISODES_FILE, "utf-8");
-    return JSON.parse(data) as EpisodicEntry[];
-  } catch {
-    return [];
-  }
-}
-
-async function writeEpisodes(episodes: EpisodicEntry[]): Promise<void> {
-  await ensureMemoryDir();
-  await fs.writeFile(EPISODES_FILE, JSON.stringify(episodes, null, 2), "utf-8");
-}
+// In-memory episodic store — survives within a single serverless invocation
+// and across warm instances, but resets on cold start.
+// Future: migrate to Supabase for true persistence.
+let _episodes: EpisodicEntry[] = [];
 
 function generateId(): string {
   return `ep_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
@@ -35,23 +12,19 @@ function generateId(): string {
 export async function addEpisode(
   entry: Omit<EpisodicEntry, "id" | "timestamp">
 ): Promise<EpisodicEntry> {
-  const episodes = await readEpisodes();
-
   const newEntry: EpisodicEntry = {
     ...entry,
     id: generateId(),
     timestamp: new Date().toISOString(),
   };
 
-  episodes.push(newEntry);
+  _episodes.push(newEntry);
 
   const maxEpisodes = 500;
-  const trimmedEpisodes =
-    episodes.length > maxEpisodes
-      ? episodes.slice(episodes.length - maxEpisodes)
-      : episodes;
+  if (_episodes.length > maxEpisodes) {
+    _episodes = _episodes.slice(_episodes.length - maxEpisodes);
+  }
 
-  await writeEpisodes(trimmedEpisodes);
   return newEntry;
 }
 
@@ -61,7 +34,7 @@ export async function getEpisodes(filters?: {
   limit?: number;
   search?: string;
 }): Promise<EpisodicEntry[]> {
-  let episodes = await readEpisodes();
+  let episodes = [..._episodes];
 
   if (filters?.agentId) {
     episodes = episodes.filter((e) => e.agentId === filters.agentId);
@@ -99,31 +72,22 @@ export async function getRecentEpisodes(
 }
 
 export async function deleteEpisode(id: string): Promise<boolean> {
-  const episodes = await readEpisodes();
-  const index = episodes.findIndex((e) => e.id === id);
-
-  if (index === -1) {
-    return false;
-  }
-
-  episodes.splice(index, 1);
-  await writeEpisodes(episodes);
+  const index = _episodes.findIndex((e) => e.id === id);
+  if (index === -1) return false;
+  _episodes.splice(index, 1);
   return true;
 }
 
 export async function clearEpisodes(agentId?: AgentId): Promise<number> {
   if (!agentId) {
-    const episodes = await readEpisodes();
-    const count = episodes.length;
-    await writeEpisodes([]);
+    const count = _episodes.length;
+    _episodes = [];
     return count;
   }
 
-  const episodes = await readEpisodes();
-  const filtered = episodes.filter((e) => e.agentId !== agentId);
-  const removedCount = episodes.length - filtered.length;
-  await writeEpisodes(filtered);
-  return removedCount;
+  const before = _episodes.length;
+  _episodes = _episodes.filter((e) => e.agentId !== agentId);
+  return before - _episodes.length;
 }
 
 export async function getEpisodeStats(): Promise<{
@@ -131,19 +95,13 @@ export async function getEpisodeStats(): Promise<{
   byAgent: Record<string, number>;
   byType: Record<string, number>;
 }> {
-  const episodes = await readEpisodes();
-
   const byAgent: Record<string, number> = {};
   const byType: Record<string, number> = {};
 
-  for (const ep of episodes) {
+  for (const ep of _episodes) {
     byAgent[ep.agentId] = (byAgent[ep.agentId] ?? 0) + 1;
     byType[ep.type] = (byType[ep.type] ?? 0) + 1;
   }
 
-  return {
-    total: episodes.length,
-    byAgent,
-    byType,
-  };
+  return { total: _episodes.length, byAgent, byType };
 }
