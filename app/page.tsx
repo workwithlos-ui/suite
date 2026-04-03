@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
-type AgentId = "cody" | "rex" | "maya" | "nova";
+type AgentId = "cody" | "rex" | "maya" | "nova" | "priya";
 
 interface AgentInfo {
   id: AgentId;
@@ -28,6 +28,20 @@ interface EpisodicEntry {
   summary: string;
   context: string;
   timestamp: string;
+}
+
+interface BoardBriefing {
+  agentId: AgentId;
+  name: string;
+  role: string;
+  response: string;
+}
+
+interface BoardResult {
+  briefings: BoardBriefing[];
+  synthesis: string;
+  question: string;
+  tensionPoints: string[];
 }
 
 const AGENTS: AgentInfo[] = [
@@ -63,6 +77,14 @@ const AGENTS: AgentInfo[] = [
     icon: "settings",
     color: "#8b5cf6",
   },
+  {
+    id: "priya",
+    name: "Priya",
+    title: "Financial Advisor",
+    description: "Unit economics, LTV:CAC, cash flow, pricing",
+    icon: "chart-bar",
+    color: "#f59e0b",
+  },
 ];
 
 function AgentIcon({ icon, size = 20 }: { icon: string; size?: number }): React.ReactElement {
@@ -89,6 +111,13 @@ function AgentIcon({ icon, size = 20 }: { icon: string; size?: number }): React.
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" />
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    ),
+    "chart-bar": (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="20" x2="12" y2="10" />
+        <line x1="18" y1="20" x2="18" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="16" />
       </svg>
     ),
   };
@@ -195,6 +224,11 @@ export default function Home(): React.ReactElement {
   const [memories, setMemories] = useState<EpisodicEntry[]>([]);
   const [showMemory, setShowMemory] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showBoard, setShowBoard] = useState(false);
+  const [boardQuestion, setBoardQuestion] = useState("");
+  const [boardResult, setBoardResult] = useState<BoardResult | null>(null);
+  const [boardLoading, setBoardLoading] = useState(false);
+  const [boardMode, setBoardMode] = useState<"brief" | "deep" | "tension">("brief");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -228,6 +262,30 @@ export default function Home(): React.ReactElement {
   useEffect(() => {
     fetchMemories();
   }, [fetchMemories]);
+
+  const sendBoardBriefing = async (): Promise<void> => {
+    const trimmed = boardQuestion.trim();
+    if (!trimmed || boardLoading) return;
+    setBoardLoading(true);
+    setBoardResult(null);
+    try {
+      const res = await fetch("/api/board-briefing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: trimmed, mode: boardMode }),
+      });
+      if (!res.ok) {
+        const errData = (await res.json()) as { error: string };
+        throw new Error(errData.error ?? `HTTP ${res.status}`);
+      }
+      const data = (await res.json()) as BoardResult;
+      setBoardResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Board briefing failed");
+    } finally {
+      setBoardLoading(false);
+    }
+  };
 
   const sendMessage = async (): Promise<void> => {
     const trimmed = input.trim();
@@ -379,9 +437,27 @@ export default function Home(): React.ReactElement {
           })}
         </nav>
 
-        <div className="border-t p-3" style={{ borderColor: "#2a2a40" }}>
+        <div className="border-t p-3 flex flex-col gap-1" style={{ borderColor: "#2a2a40" }}>
           <button
-            onClick={() => setShowMemory(!showMemory)}
+            onClick={() => { setShowBoard(!showBoard); if (!showBoard) setShowMemory(false); }}
+            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors"
+            style={{
+              background: showBoard ? "#f59e0b15" : "transparent",
+              color: showBoard ? "#fbbf24" : "#9ca3af",
+            }}
+          >
+            <span className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              Board Briefing
+            </span>
+          </button>
+          <button
+            onClick={() => { setShowMemory(!showMemory); if (!showMemory) setShowBoard(false); }}
             className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors"
             style={{
               background: showMemory ? "#6366f115" : "transparent",
@@ -665,6 +741,136 @@ export default function Home(): React.ReactElement {
           </div>
         </aside>
       )}
+
+      {/* Board Briefing Panel */}
+      {showBoard && (
+        <aside className="flex w-96 shrink-0 flex-col border-l overflow-hidden" style={{ borderColor: "#2a2a40", background: "#0e0e1a" }}>
+          <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "#2a2a40" }}>
+            <h3 className="text-sm font-semibold" style={{ color: "#e8e8f0" }}>Board Briefing</h3>
+            <button
+              onClick={() => setShowBoard(false)}
+              className="flex h-6 w-6 items-center justify-center rounded text-gray-500 hover:text-gray-300"
+              aria-label="Close board panel"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Mode selector */}
+          <div className="flex border-b px-4 py-2 gap-1" style={{ borderColor: "#2a2a40" }}>
+            {(["brief", "deep", "tension"] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setBoardMode(m)}
+                className="rounded px-2.5 py-1 text-xs capitalize transition-colors"
+                style={{
+                  color: boardMode === m ? "#fbbf24" : "#9ca3af",
+                  background: boardMode === m ? "#f59e0b15" : "#12121e",
+                  border: `1px solid ${boardMode === m ? "#f59e0b40" : "transparent"}`,
+                }}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+
+          {/* Question input */}
+          <div className="border-b px-4 py-3" style={{ borderColor: "#2a2a40" }}>
+            <textarea
+              value={boardQuestion}
+              onChange={(e) => setBoardQuestion(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendBoardBriefing(); } }}
+              placeholder="Ask all 5 agents a strategic question..."
+              rows={2}
+              className="w-full resize-none rounded-lg border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-gray-600"
+              style={{ color: "#e8e8f0", borderColor: "#2a2a40", background: "#12121e" }}
+              disabled={boardLoading}
+            />
+            <button
+              onClick={sendBoardBriefing}
+              disabled={!boardQuestion.trim() || boardLoading}
+              className="mt-2 w-full rounded-lg px-3 py-2 text-xs font-medium transition-all disabled:opacity-30"
+              style={{ background: "#f59e0b", color: "#000" }}
+            >
+              {boardLoading ? "Consulting the board..." : "Run Board Briefing"}
+            </button>
+          </div>
+
+          {/* Results */}
+          <div className="flex-1 overflow-y-auto p-3">
+            {boardLoading && (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="typing-dot h-2 w-2 rounded-full" style={{ backgroundColor: "#f59e0b" }} />
+                  <div className="typing-dot h-2 w-2 rounded-full" style={{ backgroundColor: "#f59e0b" }} />
+                  <div className="typing-dot h-2 w-2 rounded-full" style={{ backgroundColor: "#f59e0b" }} />
+                </div>
+                <p className="text-xs" style={{ color: "#6b7280" }}>5 agents deliberating...</p>
+              </div>
+            )}
+
+            {boardResult && !boardLoading && (
+              <div className="flex flex-col gap-3">
+                {/* Synthesis */}
+                {boardResult.synthesis && (
+                  <div className="rounded-lg border p-3" style={{ borderColor: "#f59e0b40", background: "#f59e0b08" }}>
+                    <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: "#f59e0b" }}>Board Synthesis</p>
+                    <div className="text-xs leading-relaxed" style={{ color: "#d1d5db" }} dangerouslySetInnerHTML={{ __html: renderMarkdown(boardResult.synthesis) }} />
+                    {boardResult.tensionPoints.length > 0 && (
+                      <div className="mt-2 flex flex-col gap-1">
+                        {boardResult.tensionPoints.map((t, i) => (
+                          <p key={i} className="text-xs rounded px-2 py-1" style={{ background: "#ef444415", color: "#f87171" }}>
+                            ⚡ {t}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Individual briefings */}
+                {boardResult.briefings.map((b) => {
+                  const agentInfo = AGENTS.find((a) => a.id === b.agentId);
+                  const color = agentInfo?.color || "#6b7280";
+                  return (
+                    <div key={b.agentId} className="rounded-lg border p-3" style={{ borderColor: "#2a2a40", background: "#12121e" }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
+                          style={{ backgroundColor: `${color}20`, color }}
+                        >
+                          <AgentIcon icon={agentInfo?.icon || "terminal"} size={12} />
+                        </div>
+                        <span className="text-xs font-medium" style={{ color }}>{b.name}</span>
+                        <span className="text-xs" style={{ color: "#6b7280" }}>{b.role}</span>
+                      </div>
+                      <div className="text-xs leading-relaxed" style={{ color: "#d1d5db" }} dangerouslySetInnerHTML={{ __html: renderMarkdown(b.response) }} />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {!boardResult && !boardLoading && (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: "#1a1a2e" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <p className="text-sm" style={{ color: "#6b7280" }}>Ask a strategic question</p>
+                <p className="mt-1 text-xs" style={{ color: "#4b5563" }}>All 5 agents respond from their domain, then synthesis highlights tensions.</p>
+              </div>
+            )}
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
@@ -694,6 +900,12 @@ function getStarterPrompts(agentId: AgentId): string[] {
       "Create SOPs for weekly client reporting",
       "Build a risk assessment for a new project",
       "Optimize our delivery process",
+    ],
+    priya: [
+      "Run our unit economics — are we healthy?",
+      "Model LTV:CAC for the advisory OS offer",
+      "What should we charge to hit 60% margins?",
+      "Cash flow forecast for the next 90 days",
     ],
   };
 

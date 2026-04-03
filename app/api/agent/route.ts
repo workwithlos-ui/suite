@@ -17,7 +17,7 @@ export async function POST(request: Request): Promise<Response> {
 
     if (!body.agentId || !isValidAgentId(body.agentId)) {
       return Response.json(
-        { error: "Invalid or missing agentId. Valid: cody, rex, maya, nova" },
+        { error: "Invalid or missing agentId. Valid: cody, rex, maya, nova, priya" },
         { status: 400 }
       );
     }
