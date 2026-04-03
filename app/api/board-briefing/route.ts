@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { BoardBriefingRequest, BoardBriefingResponse, AgentId } from "@/lib/types";
 import { getAgent, getAllAgents } from "@/lib/agents";
 import { getSemanticContext } from "@/lib/memory/semantic";
+import { fetchSharedContext, formatContextForPrompt } from "@/lib/shared-context";
 
 const anthropic = new Anthropic();
 
@@ -95,6 +96,12 @@ export async function POST(request: Request): Promise<Response> {
     const mode = body.mode ?? "brief";
     const ctx = getSemanticContext();
 
+    // Fetch ELIOS shared intelligence (proof bank, ICPs, offers, voice)
+    const sharedCtx = await fetchSharedContext();
+    const sharedBlock = sharedCtx
+      ? `\n=== ELIOS SHARED INTELLIGENCE ===\n${formatContextForPrompt(sharedCtx)}\n=== END ===\nUse proof bank entries, real client names, dollar amounts, and specific ICP pain points in your analysis. This is REAL data.`
+      : "";
+
     // Build user's business context block if provided
     const userBizBlock = body.businessContext && Object.values(body.businessContext).some(v => v?.trim())
       ? [
@@ -117,6 +124,7 @@ export async function POST(request: Request): Promise<Response> {
         : "",
       body.context ? `Context: ${body.context}` : "",
       userBizBlock,
+      sharedBlock,
     ].filter(Boolean).join("\n");
 
     const agentIds: AgentId[] = ["rex", "maya", "nova", "priya", "cody"];

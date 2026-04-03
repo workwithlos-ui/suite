@@ -8,6 +8,7 @@ import {
   extractEpisodicCandidate,
 } from "@/lib/context-engine/assembler";
 import { addEpisode } from "@/lib/memory/episodic";
+import { fetchSharedContext, formatContextForPrompt } from "@/lib/shared-context";
 
 const anthropic = new Anthropic();
 
@@ -39,6 +40,12 @@ export async function POST(request: Request): Promise<Response> {
     );
 
     let systemPrompt = buildSystemPrompt(envelope);
+
+    // Inject ELIOS shared intelligence (proof bank, ICPs, offers, voice)
+    const sharedCtx = await fetchSharedContext();
+    if (sharedCtx) {
+      systemPrompt += `\n\n=== ELIOS SHARED INTELLIGENCE ===\n${formatContextForPrompt(sharedCtx)}\n=== END SHARED INTELLIGENCE ===\n\nCRITICAL: Use the proof bank entries, specific client names, dollar amounts, and metrics above in your responses. Reference actual offers with real pricing. Address the specific ICP pain points. This is REAL business data — use it.`;
+    }
 
     // Inject user's business context if provided
     if (body.businessContext && Object.values(body.businessContext).some(v => v?.trim())) {
