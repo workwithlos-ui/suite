@@ -4,6 +4,33 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 type AgentId = "cody" | "rex" | "maya" | "nova" | "priya";
 
+interface BusinessContext {
+  companyName: string;
+  industry: string;
+  monthlyRevenue: string;
+  teamSize: string;
+  biggestChallenge: string;
+  goal: string;
+}
+
+const EMPTY_CONTEXT: BusinessContext = {
+  companyName: "",
+  industry: "",
+  monthlyRevenue: "",
+  teamSize: "",
+  biggestChallenge: "",
+  goal: "",
+};
+
+const BIZ_FIELDS: { key: keyof BusinessContext; label: string; placeholder: string; type: "text" | "textarea" }[] = [
+  { key: "companyName", label: "Company Name", placeholder: "Acme Corp", type: "text" },
+  { key: "industry", label: "Industry", placeholder: "SaaS, Home Services, Agency...", type: "text" },
+  { key: "monthlyRevenue", label: "Monthly Revenue", placeholder: "$52,000", type: "text" },
+  { key: "teamSize", label: "Team Size", placeholder: "4", type: "text" },
+  { key: "biggestChallenge", label: "Biggest Challenge Right Now", placeholder: "Client retention — losing 3-4 clients/month, stuck at 25% margins...", type: "textarea" },
+  { key: "goal", label: "30-Day Goal", placeholder: "Close 3 new clients, hit $80K MRR, launch new offer...", type: "textarea" },
+];
+
 interface AgentInfo {
   id: AgentId;
   name: string;
@@ -229,6 +256,30 @@ export default function Home(): React.ReactElement {
   const [boardResult, setBoardResult] = useState<BoardResult | null>(null);
   const [boardLoading, setBoardLoading] = useState(false);
   const [boardMode, setBoardMode] = useState<"brief" | "deep" | "tension">("brief");
+  const [bizCtx, setBizCtx] = useState<BusinessContext>(EMPTY_CONTEXT);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+
+  // Load saved business context from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("quorum_biz_ctx");
+      if (saved) {
+        const parsed = JSON.parse(saved) as BusinessContext;
+        setBizCtx(parsed);
+        setOnboardingDone(true);
+      } else {
+        setShowOnboarding(true);
+      }
+    } catch { setShowOnboarding(true); }
+  }, []);
+
+  const saveBizCtx = (ctx: BusinessContext) => {
+    setBizCtx(ctx);
+    setOnboardingDone(true);
+    setShowOnboarding(false);
+    localStorage.setItem("quorum_biz_ctx", JSON.stringify(ctx));
+  };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -272,7 +323,7 @@ export default function Home(): React.ReactElement {
       const res = await fetch("/api/board-briefing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: trimmed, mode: boardMode }),
+        body: JSON.stringify({ question: trimmed, mode: boardMode, businessContext: onboardingDone ? bizCtx : undefined }),
       });
       if (!res.ok) {
         const errData = (await res.json()) as { error: string };
@@ -322,6 +373,7 @@ export default function Home(): React.ReactElement {
           agentId: activeAgent,
           message: trimmed,
           conversationHistory,
+          businessContext: onboardingDone ? bizCtx : undefined,
         }),
       });
 
@@ -438,6 +490,22 @@ export default function Home(): React.ReactElement {
         </nav>
 
         <div className="border-t p-3 flex flex-col gap-1" style={{ borderColor: "#2a2a40" }}>
+          {onboardingDone && bizCtx.companyName && (
+            <button
+              onClick={() => setShowOnboarding(true)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{ background: "transparent", color: "#6b7280" }}
+            >
+              <span className="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                {bizCtx.companyName}
+              </span>
+              <span className="text-xs" style={{ color: "#4b5563" }}>{bizCtx.monthlyRevenue || "edit"}</span>
+            </button>
+          )}
           <button
             onClick={() => { setShowBoard(!showBoard); if (!showBoard) setShowMemory(false); }}
             className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors"
@@ -870,6 +938,58 @@ export default function Home(): React.ReactElement {
             )}
           </div>
         </aside>
+      )}
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
+          <div className="w-full max-w-lg rounded-xl border p-6" style={{ background: "#0e0e1a", borderColor: "#2a2a40" }}>
+            <h2 className="text-lg font-semibold mb-1" style={{ color: "#e8e8f0" }}>Tell the board about your business</h2>
+            <p className="text-xs mb-5" style={{ color: "#6b7280" }}>The more context you give, the sharper the advice. Every agent uses this.</p>
+            <div className="flex flex-col gap-3">
+              {BIZ_FIELDS.map((f) => (
+                <div key={f.key}>
+                  <label className="text-xs font-medium mb-1 block" style={{ color: "#9ca3af" }}>{f.label}</label>
+                  {f.type === "textarea" ? (
+                    <textarea
+                      value={bizCtx[f.key]}
+                      onChange={(e) => setBizCtx(prev => ({ ...prev, [f.key]: e.target.value }))}
+                      placeholder={f.placeholder}
+                      rows={2}
+                      className="w-full resize-none rounded-lg border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-gray-600"
+                      style={{ color: "#e8e8f0", borderColor: "#2a2a40", background: "#12121e" }}
+                    />
+                  ) : (
+                    <input
+                      value={bizCtx[f.key]}
+                      onChange={(e) => setBizCtx(prev => ({ ...prev, [f.key]: e.target.value }))}
+                      placeholder={f.placeholder}
+                      className="w-full rounded-lg border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-gray-600"
+                      style={{ color: "#e8e8f0", borderColor: "#2a2a40", background: "#12121e" }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button
+                onClick={() => saveBizCtx(bizCtx)}
+                disabled={!bizCtx.companyName.trim()}
+                className="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-30"
+                style={{ background: "#6366f1", color: "#fff" }}
+              >
+                Start Session
+              </button>
+              <button
+                onClick={() => { setShowOnboarding(false); setOnboardingDone(false); }}
+                className="rounded-lg px-4 py-2.5 text-sm font-medium"
+                style={{ background: "transparent", color: "#6b7280", border: "1px solid #2a2a40" }}
+              >
+                Skip
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

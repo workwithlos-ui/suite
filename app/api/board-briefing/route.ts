@@ -87,13 +87,28 @@ RULES:
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const body = (await request.json()) as BoardBriefingRequest;
+    const body = (await request.json()) as BoardBriefingRequest & { businessContext?: Record<string, string> };
     if (!body.question?.trim()) {
       return Response.json({ error: "Question required" }, { status: 400 });
     }
 
     const mode = body.mode ?? "brief";
     const ctx = getSemanticContext();
+
+    // Build user's business context block if provided
+    const userBizBlock = body.businessContext && Object.values(body.businessContext).some(v => v?.trim())
+      ? [
+          "\nUSER'S BUSINESS (who you're advising):",
+          body.businessContext.companyName ? `Company: ${body.businessContext.companyName}` : "",
+          body.businessContext.industry ? `Industry: ${body.businessContext.industry}` : "",
+          body.businessContext.monthlyRevenue ? `Monthly Revenue: ${body.businessContext.monthlyRevenue}` : "",
+          body.businessContext.teamSize ? `Team Size: ${body.businessContext.teamSize}` : "",
+          body.businessContext.biggestChallenge ? `Challenge: ${body.businessContext.biggestChallenge}` : "",
+          body.businessContext.goal ? `Goal: ${body.businessContext.goal}` : "",
+          "Use these SPECIFIC numbers in your analysis. Run the math on THEIR business.",
+        ].filter(Boolean).join("\n")
+      : "";
+
     const businessContext = [
       `Operator: ${ctx.operator.fullName} — ${ctx.operator.description}`,
       `Principles: ${ctx.operator.principles.slice(0, 2).join(" | ")}`,
@@ -101,6 +116,7 @@ export async function POST(request: Request): Promise<Response> {
         ? `Active Clients: ${ctx.clients.filter((c) => c.status === "active").map((c) => `${c.name} (${c.industry})`).join(", ")}`
         : "",
       body.context ? `Context: ${body.context}` : "",
+      userBizBlock,
     ].filter(Boolean).join("\n");
 
     const agentIds: AgentId[] = ["rex", "maya", "nova", "priya", "cody"];

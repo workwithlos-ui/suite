@@ -13,7 +13,7 @@ const anthropic = new Anthropic();
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const body = (await request.json()) as AgentRequest;
+    const body = (await request.json()) as AgentRequest & { businessContext?: Record<string, string> };
 
     if (!body.agentId || !isValidAgentId(body.agentId)) {
       return Response.json(
@@ -38,7 +38,25 @@ export async function POST(request: Request): Promise<Response> {
       body.message
     );
 
-    const systemPrompt = buildSystemPrompt(envelope);
+    let systemPrompt = buildSystemPrompt(envelope);
+
+    // Inject user's business context if provided
+    if (body.businessContext && Object.values(body.businessContext).some(v => v?.trim())) {
+      const bc = body.businessContext;
+      const bizBlock = [
+        "\n=== USER'S BUSINESS (this is who you're advising) ===",
+        bc.companyName ? `Company: ${bc.companyName}` : "",
+        bc.industry ? `Industry: ${bc.industry}` : "",
+        bc.monthlyRevenue ? `Monthly Revenue: ${bc.monthlyRevenue}` : "",
+        bc.teamSize ? `Team Size: ${bc.teamSize}` : "",
+        bc.biggestChallenge ? `Biggest Challenge: ${bc.biggestChallenge}` : "",
+        bc.goal ? `30-Day Goal: ${bc.goal}` : "",
+        "",
+        "CRITICAL: Use these SPECIFIC numbers and details in your response. Reference their actual revenue, team size, and challenge. Do NOT give generic advice — run the math on THEIR business.",
+      ].filter(Boolean).join("\n");
+      systemPrompt += bizBlock;
+    }
+
     const messages = buildMessages(envelope, body.message);
 
     const completion = await anthropic.messages.create({
