@@ -76,9 +76,9 @@ const AGENTS: AgentInfo[] = [
     id: "cody",
     name: "Cody",
     title: "Staff Engineer",
-    description: "System architecture, TypeScript, debugging",
+    description: "Architecture, TypeScript, debugging",
     icon: "terminal",
-    color: "#6366f1",
+    color: "#06b6d4",
   },
   {
     id: "rex",
@@ -86,15 +86,15 @@ const AGENTS: AgentInfo[] = [
     title: "Revenue Architect",
     description: "Pipeline, pricing, deal strategy",
     icon: "trending-up",
-    color: "#10b981",
+    color: "#c8f542",
   },
   {
     id: "maya",
     name: "Maya",
     title: "Growth Strategist",
-    description: "Brand, content, GEO, positioning",
+    description: "Brand, content, growth, positioning",
     icon: "megaphone",
-    color: "#f59e0b",
+    color: "#a855f7",
   },
   {
     id: "nova",
@@ -102,13 +102,13 @@ const AGENTS: AgentInfo[] = [
     title: "Operations Commander",
     description: "Process design, delivery, systems",
     icon: "settings",
-    color: "#8b5cf6",
+    color: "#3b82f6",
   },
   {
     id: "priya",
     name: "Priya",
     title: "Financial Advisor",
-    description: "Unit economics, LTV:CAC, cash flow, pricing",
+    description: "Unit economics, cash flow, pricing",
     icon: "chart-bar",
     color: "#f59e0b",
   },
@@ -259,6 +259,8 @@ export default function Home(): React.ReactElement {
   const [bizCtx, setBizCtx] = useState<BusinessContext>(EMPTY_CONTEXT);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(false);
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [walkStep, setWalkStep] = useState(0);
 
   // Load saved business context from localStorage on mount
   useEffect(() => {
@@ -269,10 +271,39 @@ export default function Home(): React.ReactElement {
         setBizCtx(parsed);
         setOnboardingDone(true);
       } else {
-        setShowOnboarding(true);
+        const walkthroughSeen = localStorage.getItem("suite_onboarding_seen");
+        if (!walkthroughSeen) {
+          setShowWalkthrough(true);
+        } else {
+          setShowOnboarding(true);
+        }
       }
-    } catch { setShowOnboarding(true); }
+    } catch {
+      setShowOnboarding(true);
+    }
   }, []);
+
+  // Auto-advance walkthrough steps
+  useEffect(() => {
+    if (!showWalkthrough) return;
+    const timer = setInterval(() => {
+      setWalkStep((prev) => {
+        if (prev >= 2) {
+          clearInterval(timer);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [showWalkthrough]);
+
+  const dismissWalkthrough = () => {
+    setShowWalkthrough(false);
+    setWalkStep(0);
+    localStorage.setItem("suite_onboarding_seen", "true");
+    setShowOnboarding(true);
+  };
 
   const saveBizCtx = (ctx: BusinessContext) => {
     setBizCtx(ctx);
@@ -449,6 +480,8 @@ export default function Home(): React.ReactElement {
                 style={{
                   background: isActive ? `${agent.color}15` : "transparent",
                   border: `1px solid ${isActive ? `${agent.color}40` : "transparent"}`,
+                  borderLeft: `3px solid ${isActive ? agent.color : "transparent"}`,
+                  boxShadow: isActive ? `inset 0 0 20px ${agent.color}08` : "none",
                 }}
               >
                 <div
@@ -463,7 +496,7 @@ export default function Home(): React.ReactElement {
                 <div className="flex-1 overflow-hidden">
                   <div className="flex items-center justify-between">
                     <span
-                      className="text-sm font-medium"
+                      className="text-sm font-semibold"
                       style={{ color: isActive ? "#e8e8f0" : "#9ca3af" }}
                     >
                       {agent.name}
@@ -480,8 +513,11 @@ export default function Home(): React.ReactElement {
                       </span>
                     )}
                   </div>
-                  <p className="truncate text-xs" style={{ color: "#6b7280" }}>
+                  <p className="text-xs font-medium" style={{ color: isActive ? `${agent.color}cc` : "#6b7280" }}>
                     {agent.title}
+                  </p>
+                  <p className="truncate text-xs mt-0.5" style={{ color: "#4b5563" }}>
+                    {agent.description}
                   </p>
                 </div>
               </button>
@@ -648,7 +684,13 @@ export default function Home(): React.ReactElement {
                       >
                         <AgentIcon icon={currentAgent.icon} size={16} />
                       </div>
-                      <div className="max-w-[85%]">
+                      <div
+                        className="max-w-[85%] rounded-xl px-4 py-3"
+                        style={{
+                          background: "#0f0f1a",
+                          borderLeft: `3px solid ${currentAgent.color}`,
+                        }}
+                      >
                         <div
                           className="prose-agent text-sm leading-relaxed"
                           style={{ color: "#d1d5db" }}
@@ -903,8 +945,10 @@ export default function Home(): React.ReactElement {
                 {boardResult.briefings.map((b) => {
                   const agentInfo = AGENTS.find((a) => a.id === b.agentId);
                   const color = agentInfo?.color || "#6b7280";
+                  const firstSentence = b.response.split(/[.!?]\s/)[0] + ".";
+                  const restOfResponse = b.response.slice(firstSentence.length).trim();
                   return (
-                    <div key={b.agentId} className="rounded-lg border p-3" style={{ borderColor: "#2a2a40", background: "#12121e" }}>
+                    <div key={b.agentId} className="rounded-lg border p-3" style={{ borderColor: `${color}30`, borderLeft: `4px solid ${color}`, background: "#111118" }}>
                       <div className="flex items-center gap-2 mb-2">
                         <div
                           className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
@@ -912,10 +956,11 @@ export default function Home(): React.ReactElement {
                         >
                           <AgentIcon icon={agentInfo?.icon || "terminal"} size={12} />
                         </div>
-                        <span className="text-xs font-medium" style={{ color }}>{b.name}</span>
+                        <span className="text-xs font-semibold" style={{ color }}>{b.name}</span>
                         <span className="text-xs" style={{ color: "#6b7280" }}>{b.role}</span>
                       </div>
-                      <div className="text-xs leading-relaxed" style={{ color: "#d1d5db" }} dangerouslySetInnerHTML={{ __html: renderMarkdown(b.response) }} />
+                      <p className="text-xs font-semibold mb-1" style={{ color: "#e8e8f0" }}>{firstSentence}</p>
+                      {restOfResponse && <div className="text-xs leading-relaxed" style={{ color: "#d1d5db" }} dangerouslySetInnerHTML={{ __html: renderMarkdown(restOfResponse) }} />}
                     </div>
                   );
                 })}
@@ -938,6 +983,85 @@ export default function Home(): React.ReactElement {
             )}
           </div>
         </aside>
+      )}
+
+      {/* Walkthrough Overlay */}
+      {showWalkthrough && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center" style={{ background: "rgba(5,5,10,0.95)" }}>
+          <div className="w-full max-w-md text-center px-6">
+            {walkStep === 0 && (
+              <div key="step0">
+                <p className="text-xs font-medium uppercase tracking-widest mb-6" style={{ color: "#6b7280" }}>Welcome to SUITE</p>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "#e8e8f0" }}>Your Executive Board</h2>
+                <p className="text-sm mb-8" style={{ color: "#9ca3af" }}>5 AI executives, each an expert in their domain. Always available. Always opinionated.</p>
+                <div className="flex justify-center gap-3 mb-8">
+                  {AGENTS.map((a, i) => (
+                    <div
+                      key={a.id}
+                      className="flex h-12 w-12 items-center justify-center rounded-xl"
+                      style={{
+                        backgroundColor: `${a.color}20`,
+                        color: a.color,
+                        opacity: 1,
+                        animationDelay: `${i * 200}ms`,
+                      }}
+                    >
+                      <AgentIcon icon={a.icon} size={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {walkStep === 1 && (
+              <div key="step1">
+                <p className="text-xs font-medium uppercase tracking-widest mb-6" style={{ color: "#6b7280" }}>Mode 1</p>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "#e8e8f0" }}>1:1 Advice</h2>
+                <p className="text-sm mb-8" style={{ color: "#9ca3af" }}>Pick any officer for focused counsel. Rex on revenue. Maya on growth. Cody on architecture. Deep, contextual advice from one expert at a time.</p>
+                <div className="mx-auto w-64 rounded-xl border p-4" style={{ borderColor: "#2a2a40", background: "#0e0e1a" }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-6 w-6 rounded flex items-center justify-center" style={{ backgroundColor: "#c8f54220", color: "#c8f542" }}>
+                      <AgentIcon icon="trending-up" size={12} />
+                    </div>
+                    <span className="text-xs font-medium" style={{ color: "#c8f542" }}>Rex</span>
+                  </div>
+                  <div className="rounded-lg p-2" style={{ background: "#0f0f1a", borderLeft: "3px solid #c8f542" }}>
+                    <p className="text-xs" style={{ color: "#9ca3af" }}>Here is your custom pipeline strategy...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {walkStep === 2 && (
+              <div key="step2">
+                <p className="text-xs font-medium uppercase tracking-widest mb-6" style={{ color: "#6b7280" }}>Mode 2</p>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "#e8e8f0" }}>Board Briefing</h2>
+                <p className="text-sm mb-8" style={{ color: "#9ca3af" }}>Get all 5 perspectives at once on any question. They disagree. They debate. You get the full picture.</p>
+                <div className="flex justify-center gap-2 mb-4">
+                  {AGENTS.map((a) => (
+                    <div
+                      key={a.id}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg"
+                      style={{ backgroundColor: `${a.color}25`, color: a.color }}
+                    >
+                      <AgentIcon icon={a.icon} size={14} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex justify-center gap-2 mb-6">
+              {[0, 1, 2].map((i) => (
+                <button key={i} onClick={() => setWalkStep(i)} className="h-1.5 rounded-full transition-all" style={{ width: walkStep === i ? 24 : 8, backgroundColor: walkStep === i ? "#e8e8f0" : "#2a2a40" }} />
+              ))}
+            </div>
+            <button
+              onClick={dismissWalkthrough}
+              className="rounded-xl px-8 py-2.5 text-sm font-medium transition-all"
+              style={{ background: "#6366f1", color: "#fff" }}
+            >
+              Got it
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Onboarding Modal */}
@@ -998,34 +1122,29 @@ export default function Home(): React.ReactElement {
 function getStarterPrompts(agentId: AgentId): string[] {
   const prompts: Record<AgentId, string[]> = {
     cody: [
-      "Design the API architecture for a new product",
-      "Review the current tech stack and suggest improvements",
-      "Build a database schema for client management",
-      "Debug a performance issue in the Next.js app",
+      "Should I build or buy my tech stack?",
+      "How do I architect for scale?",
+      "What's the fastest path to an MVP?",
     ],
     rex: [
-      "Analyze our current pipeline health",
-      "Build a pricing model for a new service tier",
-      "Create a sales forecast for Q2",
-      "Design a proposal for a $10K/month engagement",
+      "How do I build a $100K/month pipeline?",
+      "What pricing model maximizes LTV?",
+      "How do I close deals faster?",
     ],
     maya: [
-      "Create a content strategy for LinkedIn",
-      "Audit our brand positioning against competitors",
-      "Design a GEO optimization plan",
-      "Build a 30-day content calendar",
+      "What content strategy drives B2B inbound?",
+      "How do I build a personal brand that converts?",
+      "What's the best organic growth channel?",
     ],
     nova: [
-      "Design the client onboarding workflow",
-      "Create SOPs for weekly client reporting",
-      "Build a risk assessment for a new project",
-      "Optimize our delivery process",
+      "How do I scale without hiring?",
+      "What processes should I automate first?",
+      "How do I reduce client delivery time?",
     ],
     priya: [
-      "Run our unit economics — are we healthy?",
-      "Model LTV:CAC for the advisory OS offer",
-      "What should we charge to hit 60% margins?",
-      "Cash flow forecast for the next 90 days",
+      "What's a healthy LTV:CAC ratio for my business?",
+      "How should I price my services?",
+      "When should I raise prices?",
     ],
   };
 
