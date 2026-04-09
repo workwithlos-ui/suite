@@ -1,0 +1,77 @@
+{
+  "operator": {
+    "name": "CLIENT_NAME",
+    "fullName": "CLIENT_FULL_NAME",
+    "tagline": "CLIENT_TAGLINE",
+    "description": "What the business does. Who it serves. How it makes money.",
+    "founder": "FOUNDER_NAME",
+    "principles": [
+      "Core principle 1",
+      "Core principle 2",
+      "Core principle 3"
+    ],
+    "voice": {
+      "tone": "direct, confident, zero-filler",
+      "style": "Operator-first. No corporate speak.",
+      "rules": [
+        "Lead with specific numbers",
+        "No em dashes",
+        "Named results not generic claims"
+      ]
+    }
+  },
+  "operator_context": {
+    "current_month": "MONTH YEAR",
+    "revenue_target": 0,
+    "pipeline_value": 0,
+    "revenue_gap": 0,
+    "mode": "pipeline_now"
+  },
+  "clients": [
+    {
+      "id": "client-id",
+      "name": "Client Name",
+      "industry": "Industry",
+      "market": "Market/Region",
+      "stage": "Growth/Scale/Launch",
+      "revenue": "$X revenue",
+      "focus": ["Focus area 1", "Focus area 2"],
+      "status": "active"
+    }
+  ],
+  "products": [
+    {
+      "id": "product-id",
+      "name": "Product Name",
+      "description": "What it does, who buys it, price point",
+      "status": "live",
+      "url": "https://product.url"
+    }
+  ],
+  "rules": {
+    "engagement": [
+      "Every recommendation connects to revenue",
+      "No generic advice without running the specific math"
+    ],
+    "pricing": [
+      "Value-based pricing only",
+      "Minimum engagement: $X/month"
+    ],
+    "delivery": [
+      "Ship demo first",
+      "Document everything as SOP"
+    ]
+  },
+  "frameworks": {
+    "proof_bank": {
+      "result_1": "Specific result with named client and real number",
+      "result_2": "Specific result with named client and real number"
+    },
+    "spcl": {
+      "S": "Status — elevates authority in category",
+      "P": "Power — demonstrates capability and results",
+      "C": "Credibility — backed by named clients and specific numbers",
+      "L": "Likeness — speaks exact language of target ICP"
+    }
+  }
+}
