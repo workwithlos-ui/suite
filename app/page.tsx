@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { ActedOnButton } from "@/components/ActedOnButton";
 
 type AgentId = "cody" | "rex" | "maya" | "nova" | "priya";
 
@@ -46,6 +47,7 @@ interface Message {
   content: string;
   agentId: AgentId;
   timestamp: string;
+  memoryId?: string;
 }
 
 interface EpisodicEntry {
@@ -417,6 +419,7 @@ export default function Home(): React.ReactElement {
         message: string;
         agentId: AgentId;
         timestamp: string;
+        memoryId?: string;
       };
 
       const assistantMessage: Message = {
@@ -425,6 +428,7 @@ export default function Home(): React.ReactElement {
         content: data.message,
         agentId: activeAgent,
         timestamp: data.timestamp,
+        memoryId: data.memoryId,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -698,9 +702,18 @@ export default function Home(): React.ReactElement {
                             __html: renderMarkdown(msg.content),
                           }}
                         />
-                        <p className="mt-1.5 text-xs" style={{ color: "#4b5563" }}>
-                          {currentAgent.name} &middot; {formatTime(msg.timestamp)}
-                        </p>
+                        <div className="flex items-center justify-between mt-1.5">
+                          <p className="text-xs" style={{ color: "#4b5563" }}>
+                            {currentAgent.name} &middot; {formatTime(msg.timestamp)}
+                          </p>
+                          {msg.memoryId && (
+                            <ActedOnButton
+                              memoryId={msg.memoryId}
+                              agentId={msg.agentId}
+                              agentColor={currentAgent.color}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}

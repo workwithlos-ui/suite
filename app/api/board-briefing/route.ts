@@ -3,6 +3,7 @@ import type { BoardBriefingRequest, BoardBriefingResponse, AgentId } from "@/lib
 import { getAgent, getAllAgents } from "@/lib/agents";
 import { getSemanticContext } from "@/lib/memory/semantic";
 import { fetchSharedContext, formatContextForPrompt } from "@/lib/shared-context";
+import { getActedOnMemories } from "@/lib/memory/agent-memory";
 
 const anthropic = new Anthropic();
 
@@ -128,8 +129,24 @@ export async function POST(request: Request): Promise<Response> {
     ].filter(Boolean).join("\n");
 
     const agentIds: AgentId[] = ["rex", "maya", "nova", "priya", "cody"];
+
+    // Inject each agent's proven memories into their briefing context
+    const agentMemoryBlocks = await Promise.allSettled(
+      agentIds.map(async (id) => {
+        try {
+          const proven = await getActedOnMemories(id, "default", 3);
+          if (!proven.length) return { id, block: "" };
+          const block = `\nYOUR PROVEN ADVICE FOR THIS OPERATOR (acted on, confirmed helpful):\n${proven.map(m => `- ${m.key_insight} → ${m.acted_on_result}`).join("\n")}`;
+          return { id, block };
+        } catch { return { id, block: "" }; }
+      })
+    );
+    const memoryMap: Record<string, string> = {};
+    agentMemoryBlocks.forEach(r => {
+      if (r.status === "fulfilled") memoryMap[r.value.id] = r.value.block;
+    });
     const briefings = await Promise.all(
-      agentIds.map((id) => getAgentBriefing(id, body.question, businessContext, mode === "tension" ? "deep" : mode))
+      agentIds.map((id) => getAgentBriefing(id, body.question, businessContext + (memoryMap[id] ?? ""), mode === "tension" ? "deep" : mode))
     );
 
     let synthesis = "";
